@@ -1,0 +1,48 @@
+{
+  "name": "mcp-servers-unified-guide",
+  "version": "0.1.0",
+  "description": "A comprehensive, production-ready guide for Model Context Protocol (MCP) servers across multiple platforms and languages",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:markdown": "markdownlint '**/*.md' --ignore node_modules",
+    "lint:markdown:fix": "markdownlint '**/*.md' --ignore node_modules --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"Tests will be added in a future release\" && exit 0",
+    "validate": "npm run lint && npm run format:check && npm run typecheck"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "llm",
+    "documentation",
+    "guide",
+    "servers",
+    "clients"
+  ],
+  "author": "The Model Context Protocol Community",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@eslint/markdown": "^6.2.2",
+    "@types/node": "^22.10.2",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsonc": "^2.18.2",
+    "globals": "^15.12.0",
+    "jsonc-eslint-parser": "^2.4.0",
+    "markdownlint-cli": "^0.43.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

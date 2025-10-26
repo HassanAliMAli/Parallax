@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "noImplicitOverride": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "types": ["node"],
+    "lib": ["ES2023"],
+    "baseUrl": ".",
+    "paths": {
+      "@clients/*": ["clients/*"],
+      "@servers/*": ["servers/*"],
+      "@scripts/*": ["scripts/*"],
+      "@examples/*": ["examples/*"],
+      "@assets/*": ["assets/*"],
+      "@support/*": ["support-matrix/*"]
+    }
+  }
+}
