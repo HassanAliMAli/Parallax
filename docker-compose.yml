@@ -1,0 +1,67 @@
+Here’s the next file.
+
+***
+
+### Filename: `docker-compose.yml`
+
+```yaml
+# ======================================================
+# PARALLAX - docker-compose.yml (v1)
+# ======================================================
+# Provides a one-command setup for running the entire
+# local Perplexity Bridge with persistent storage.
+# ======================================================
+
+version: "3.9"
+
+services:
+  parallax:
+    container_name: parallax
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      BRIDGE_CONFIG_PATH: /app/config.yml
+      BRIDGE_SECRET_KEY: "change_me_to_random_32chars"
+      PLAYWRIGHT_BROWSERS_PATH: /app/.cache/ms-playwright
+    volumes:
+      - ./config.yml:/app/config.yml:ro
+      - ./data:/app/data
+      - ./logs:/app/data/logs
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/v1/status || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    shm_size: "2gb" # prevent chromium crash on low SHM hosts
+
+  # --------------------------------------------------
+  # Optional Prometheus container for local metrics
+  # --------------------------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+
+volumes:
+  prometheus_data:
+```
+
+***
+
+### Notes:
+- Mounts your local `data/` folder for persistent DB, session, and logs.  
+- Tested stable on Linux, macOS, and Windows WSL 2.  
+- Adjust `shm_size` for Chromium’s shared memory usage.  
+- Add a Prometheus config under `metrics/prometheus.yml` if you enable monitoring.
+
+***

@@ -1,0 +1,86 @@
+# ================================================
+# PARALLAX Configuration File (v1)
+# ================================================
+# This file defines all tunable parameters for the
+# local Perplexity.ai bridge. Copy and rename it
+# to `config.yml` in the project root before running.
+# -----------------------------------------------
+
+# ===========  SERVER SETTINGS  ==================
+server:
+  port: 3000           # API + Dashboard port
+  host: "127.0.0.1"    # Local-only unless LAN is enabled
+  lan_enabled: false   # Set true to allow LAN access
+  cors_origins: ["*"]  # Optional CORS whitelist for web apps
+
+# ===========  WORKER SETTINGS  ==================
+worker:
+  headless: true          # false = visible browser window
+  timeout_seconds: 180    # max per-job runtime
+  concurrency: 1          # one page (v1); more in v2
+  retry_attempts: 1       # number of auto-retries on transient errors
+  viewport:
+    width: 1920
+    height: 1080
+  persistence:
+    mode: cookies         # cookies or hybrid (cookies+storage)
+    storage_state_file: "./data/session/state.json"
+    capture_on_login: true
+  captcha:
+    detection_selectors:
+      - "iframe[src*='captcha']"
+      - "#challenge-form"
+    auto_pause_jobs: true
+
+# ===========  STORAGE SETTINGS  =================
+storage:
+  data_dir: "./data"
+  db_file: "perplex_bridge.db"
+  backups_enabled: true
+  backup_interval_hours: 12
+  max_backup_files: 5
+
+# ===========  LOGGING SETTINGS  =================
+logging:
+  level: "info"          # options: debug, info, warn, error
+  file: "./data/logs/bridge.log"
+  max_size: "10M"
+  max_files: 5
+  format: "pino-pretty"  # "json" for structured logs
+
+# ===========  SECURITY SETTINGS  ================
+security:
+  require_api_key: true
+  api_key_header: "X-API-Key"   # or Authorization: Bearer
+  rate_limit:
+    enabled: false
+    max_per_minute: 100
+  lan_protection:
+    allowed_ips: ["127.0.0.1"]
+
+# ===========  METRICS EXPORT  ===================
+metrics:
+  enabled: true
+  endpoint: "/metrics"          # Prometheus-compatible
+  update_interval_seconds: 15
+
+# ===========  DASHBOARD SETTINGS  ===============
+dashboard:
+  theme: "dark"                 # dark or light
+  auto_refresh_seconds: 10
+  auth_required: false          # local dashboard only
+  screenshot_on_error: true
+
+# ===========  CLI SETTINGS  =====================
+cli:
+  default_headless: true
+  autostart_api: true
+  save_api_key_to_file: true
+  copy_key_to_clipboard: true
+
+# ================================================
+# Notes:
+# - All relative paths resolved from project root
+# - Env variable `BRIDGE_CONFIG_PATH` can override
+# - YAML supports # comments; maintain indentation
+# ================================================

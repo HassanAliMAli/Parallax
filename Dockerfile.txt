@@ -1,0 +1,74 @@
+Here’s the next file.
+
+***
+
+### Filename: `Dockerfile`
+
+```dockerfile
+# =====================================================
+# PARALLAX - Dockerfile (v1)
+# =====================================================
+# A minimal, production-ready container image that runs
+# the Fastify API, Playwright worker, and dashboard.
+# =====================================================
+
+# ---------- Base Layer ----------
+FROM node:22-slim AS base
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies for Playwright Chromium
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libnss3 libatk1.0-0 libatk-bridge2.0-0 libdrm2 libxkbcommon0 \
+        libxcomposite1 libxdamage1 libxrandr2 libgbm1 libpango-1.0-0 \
+        libasound2 libxshmfence1 xvfb wget fonts-liberation \
+        ca-certificates && \
+    rm -rf /var/lib/apt/lists/* && \
+    adduser --disabled-password --gecos "" bridgeuser
+
+# Copy package manifests
+COPY package*.json ./
+
+# Install app dependencies
+RUN npm ci --omit=dev && npx playwright install --with-deps chromium
+
+# ---------- Application Layer ----------
+FROM base AS runner
+
+USER bridgeuser
+
+# Copy project source
+COPY . .
+
+# Default environment
+ENV NODE_ENV=production
+ENV BRIDGE_CONFIG_PATH=/app/config.yml
+ENV PLAYWRIGHT_BROWSERS_PATH=/app/.cache/ms-playwright
+
+# Internal HTTP port
+EXPOSE 3000
+
+# Data folder setup
+RUN mkdir -p /app/data/logs /app/data/artifacts && \
+    chmod -R 700 /app/data
+
+# Healthcheck (optional for orchestration)
+HEALTHCHECK --interval=30s --timeout=5s \
+  CMD node -e "fetch('http://localhost:3000/v1/status').then(r=>r.ok).catch(()=>process.exit(1))"
+
+# ---------- Launch ----------
+CMD ["node", "dist/index.js"]
+```
+
+***
+
+### Notes
+- Uses **Node 22-slim** with all required Playwright libs preinstalled.  
+- Runs under non-root user `bridgeuser` for security.  
+- Expects `config.yml` or `config.yml.example` in `/app/`.  
+- Exposes port `3000` for both API and dashboard.  
+- Automatically downloads Chromium once during build.  
+
+***
