@@ -2,13 +2,15 @@ import './db';
 import Fastify from 'fastify';
 
 import statusRoutes from './server/routes/status';
+import jobsRoutes from './server/routes/jobs';
 
 const server = Fastify({
   logger: true
 });
 
 // Register routes
-server.register(statusRoutes, { prefix: '/v1' });
+server.register(statusRoutes);
+server.register(jobsRoutes);
 
 server.get('/', async (request, reply) => {
   return { hello: 'world' };
