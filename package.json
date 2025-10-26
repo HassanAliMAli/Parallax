@@ -1,0 +1,35 @@
+{
+  "name": "parallax",
+  "version": "1.0.0",
+  "description": "Here’s the full and **most up‑to‑date `README.md`** for your **PARALLAX** project — the definitive entry point for any human or AI coding agent to understand, set up, and build your system.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HassanAliMAli/Parallax.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HassanAliMAli/Parallax/issues"
+  },
+  "homepage": "https://github.com/HassanAliMAli/Parallax#readme",
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "fastify": "^5.6.1",
+    "pino": "^10.1.0",
+    "playwright": "^1.56.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "esbuild": "^0.25.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
