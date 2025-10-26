@@ -1,9 +1,14 @@
 import './db';
 import Fastify from 'fastify';
 
+import statusRoutes from './server/routes/status';
+
 const server = Fastify({
   logger: true
 });
+
+// Register routes
+server.register(statusRoutes, { prefix: '/v1' });
 
 server.get('/', async (request, reply) => {
   return { hello: 'world' };

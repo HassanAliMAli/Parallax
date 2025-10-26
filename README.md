@@ -27,6 +27,30 @@ This system allows **apps like Obsidian, Cursor, n8n, VS Code, and others** to c
 
 ---
 
+## API Endpoints
+
+### `GET /v1/status`
+
+Provides a real-time snapshot of the system's health and status.
+
+**Returns:**
+
+```json
+{
+  "worker_running": false,
+  "queued_jobs": 0,
+  "uptime_seconds": 120,
+  "db_status": "connected"
+}
+```
+
+-   `worker_running`: `true` if the browser automation worker is active.
+-   `queued_jobs`: Number of tasks waiting in the queue.
+-   `uptime_seconds`: How long the server has been running.
+-   `db_status`: Status of the database connection.
+
+---
+
 ## Technical Stack
 
 | Layer | Technology |
