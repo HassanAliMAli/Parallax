@@ -1,14 +1,7 @@
-Here’s the next file.  
-
-***
-
-### Filename: `scripts/migrate.ts`
-
-```typescript
 /**
- * ============================================================
+ * ============================================================ 
  * PARALLAX - Database Migration Script (v1)
- * ============================================================
+ * ============================================================ 
  * Initializes the SQLite database by executing the schema.sql
  * definitions and performing initial seeding (API key, indexes,
  * metadata entries).
@@ -17,13 +10,13 @@ Here’s the next file.
  *   npx ts-node scripts/migrate.ts
  *   or
  *   npm run migrate
- * ============================================================
+ * ============================================================ 
  */
 
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
-import { Database } from "better-sqlite3";
+import Database from "better-sqlite3";
 
 const ROOT = path.resolve(path.join(__dirname, ".."));
 const DATA_DIR = path.join(ROOT, "data");
@@ -59,7 +52,7 @@ async function runMigration() {
   }
 
   // Verify default key record
-  const keyCount = db.prepare("SELECT COUNT(*) AS total FROM api_keys").get();
+  const keyCount = db.prepare("SELECT COUNT(*) AS total FROM api_keys").get() as { total: number };
   if (!keyCount.total) {
     db.prepare(
       `INSERT INTO api_keys (id, key_hash, name, created_at)
@@ -83,14 +76,3 @@ runMigration().catch((e) => {
   console.error(chalk.red("\nMigration failed due to an unexpected exception:\n"), e);
   process.exit(1);
 });
-```
-
-***
-
-### Highlights:
-- Automatically creates `data/` directory and database file.  
-- Reads and executes full `schema.sql`.  
-- Seeds default metadata and placeholder API key.  
-- Can be run via `npm run migrate` using a small `scripts` shortcut.  
-
-***

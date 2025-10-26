@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
-    "start": "npm run build && node dist/index.js"
+    "start": "npm run build && node dist/index.js",
+    "migrate": "ts-node scripts/migrate.ts"
   },
   "repository": {
     "type": "git",
@@ -24,11 +25,16 @@
   "homepage": "https://github.com/HassanAliMAli/Parallax#readme",
   "dependencies": {
     "better-sqlite3": "^12.4.1",
+    "chalk": "^4.1.2",
+    "clipboardy": "^5.0.0",
     "fastify": "^5.6.1",
+    "ora": "^5.4.1",
     "pino": "^10.1.0",
     "playwright": "^1.56.1"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/chalk": "^0.4.31",
     "@types/node": "^24.9.1",
     "esbuild": "^0.25.11",
     "ts-node": "^10.9.2",

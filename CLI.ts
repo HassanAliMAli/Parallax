@@ -1,21 +1,14 @@
-Here’s the next file.
-
-***
-
-### Filename: `CLI.ts`
-
-```typescript
 /**
- * ============================================================
+ * ============================================================ 
  * PARALLAX CLI (v1)
- * ============================================================
+ * ============================================================ 
  * An interactive command-line interface for managing
  * the local Perplexity bridge lifecycle:
  * - start/stop/status server
  * - generate API keys
  * - initiate login session
  * - check updates & metrics
- * ============================================================
+ * ============================================================ 
  */
 
 import fs from "fs";
@@ -44,7 +37,7 @@ async function generateApiKey(label = "default") {
   const hash = crypto.createHash("sha256").update(keyRaw).digest("hex");
   const dbFile = path.join(DATA_DIR, "perplex_bridge.db");
 
-  const { Database } = await import("better-sqlite3");
+  const Database = (await import("better-sqlite3")).default;
   const db = new Database(dbFile);
   db.prepare(
     `INSERT INTO api_keys (id, key_hash, name, created_at)
@@ -145,14 +138,3 @@ Usage:
 }
 
 main().catch((err) => console.error(chalk.red("Error:"), err));
-```
-
-***
-
-### Notes:
-- Simple Node-based CLI using `chalk`, `ora`, and `clipboardy`.
-- Can work as standalone executable if compiled via `pkg`.
-- Provides four commands: `start`, `status`, `generate-key`, `login`.
-- Works in tandem with SQLite and the main server entry (`dist/index.js`).
-
-***

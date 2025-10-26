@@ -1,3 +1,4 @@
+import './db';
 import Fastify from 'fastify';
 
 const server = Fastify({
