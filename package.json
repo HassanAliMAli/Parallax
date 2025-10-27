@@ -7,10 +7,15 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsc --project tsconfig.test.json && node tmp/test-dist/tests/handshake.test.js",
     "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --external:better-sqlite3",
+    "build:scripts": "tsc --project scripts/tsconfig.json",
     "start": "npm run build && node dist/index.js",
-    "migrate": "ts-node scripts/migrate.ts"
+    "migrate": "ts-node scripts/migrate.ts",
+    "bootstrap": "npm run build:scripts --silent && node scripts/dist/cli/bootstrap.js",
+    "health-check": "npm run build:scripts --silent && node scripts/dist/cli/health-check.js",
+    "orchestrate:start": "npm run build:scripts --silent && node scripts/dist/cli/orchestrate.js --action start",
+    "orchestrate:stop": "npm run build:scripts --silent && node scripts/dist/cli/orchestrate.js --action stop"
   },
   "repository": {
     "type": "git",
@@ -26,6 +31,7 @@
   "dependencies": {
     "better-sqlite3": "^12.4.1",
     "chalk": "^4.1.2",
+    "commander": "^12.1.0",
     "clipboardy": "^5.0.0",
     "fastify": "^5.6.1",
     "ora": "^5.4.1",

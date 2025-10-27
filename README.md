@@ -98,6 +98,55 @@ The API server will be running at `http://localhost:3000`. Currently, it only ha
 
 ---
 
+## Operational Tooling
+
+A new suite of cross-platform scripts lives in `scripts/`. They provide consistent entrypoints for provisioning, service orchestration, and health verification across macOS, Linux, and Windows environments.
+
+### Bootstrap the workspace
+
+Run the bootstrap workflow to install dependencies and materialise `.env` from `.env.example`:
+
+| Platform | Command |
+|----------|---------|
+| macOS & Linux | `npm run bootstrap` or `./scripts/bootstrap.sh`
+| Windows (PowerShell) | `npm run bootstrap -- --dry-run` (preview) or `pwsh ./scripts/bootstrap.ps1`
+
+Pass `--dry-run` to preview actions or `--skip-python` / `--skip-node` to skip specific steps.
+
+### MCP health-check CLI
+
+Use the health-checker to inspect MCP handshake metadata and surface missing credentials:
+
+```bash
+npm run health-check
+npm run health-check -- --server core-api --client cli --json-only
+npm run health-check -- --list # enumerate known servers/clients
+```
+
+The command writes a colourised summary to **stderr** and emits machine-readable JSON to **stdout**, making it easy to redirect structured output into other tools.
+
+### Service orchestration helpers
+
+Start or stop local infrastructure via Docker Compose or the per-server local fallbacks defined in metadata:
+
+| Action | npm script | POSIX wrapper | PowerShell wrapper |
+|--------|------------|---------------|--------------------|
+| Start  | `npm run orchestrate:start` | `./scripts/start.sh` | `pwsh ./scripts/start.ps1` |
+| Stop   | `npm run orchestrate:stop`  | `./scripts/stop.sh`  | `pwsh ./scripts/stop.ps1`  |
+
+Add `--server <id>` to scope the action to specific services or `--prefer-local` to bypass Docker even when Compose metadata is present.
+
+### Environment convenience scripts
+
+Load environment variables from `.env` or `.env.example` without manual copy/paste:
+
+- **macOS/Linux** – `eval "$(node scripts/set-env.mjs)"`
+- **Windows** – `. .\scripts\set-env.ps1`
+
+The PowerShell script can also be run with `-Print` to emit persistent `setx` commands.
+
+---
+
 ## CLI Usage (In Development)
 
 The command-line interface (`CLI.ts`) is included but not yet fully integrated. Once complete, you will be able to run it via `npm run cli -- <command>`.

@@ -1,0 +1,153 @@
+{
+  "version": "2024.10",
+  "clients": [
+    {
+      "id": "cli",
+      "name": "Parallax CLI",
+      "description": "Local developer tooling and automation entrypoint."
+    },
+    {
+      "id": "dashboard",
+      "name": "Operations Dashboard",
+      "description": "Browser dashboard for job orchestration telemetry."
+    },
+    {
+      "id": "automation",
+      "name": "Automation Worker",
+      "description": "Background worker executing queued jobs via MCP."
+    }
+  ],
+  "servers": [
+    {
+      "id": "core-api",
+      "name": "Core Fastify API",
+      "description": "Primary Fastify HTTP API powering Parallax orchestration.",
+      "host": "http://localhost:3000",
+      "tags": ["docker", "fastify", "primary"],
+      "documentationUrl": "https://github.com/HassanAliMAli/Parallax",
+      "orchestration": {
+        "composeService": "core-api",
+        "local": {
+          "start": "npm run start",
+          "stop": "npm run stop"
+        }
+      },
+      "handshakes": [
+        {
+          "client": "cli",
+          "protocol": "mcp-http",
+          "endpoint": "/mcp/handshake",
+          "summary": "Validates the MCP handshake contract using the CLI client profile.",
+          "requiresCredentials": true,
+          "credentialEnvVars": ["PARALLAX_API_KEY"],
+          "guidance": "Export PARALLAX_API_KEY with an API key generated via `npm run migrate`.",
+          "mock": {
+            "result": "ok",
+            "latencyMs": 48,
+            "payload": {
+              "session": "cli",
+              "version": "1.0.0",
+              "capabilities": ["jobs.read", "jobs.write", "status.read"]
+            }
+          }
+        },
+        {
+          "client": "dashboard",
+          "protocol": "mcp-http",
+          "endpoint": "/mcp/handshake",
+          "summary": "Ensures dashboard client can retrieve readonly telemetry.",
+          "requiresCredentials": false,
+          "mock": {
+            "result": "warn",
+            "latencyMs": 63,
+            "payload": {
+              "session": "dashboard",
+              "version": "1.0.0",
+              "capabilities": ["status.read"],
+              "notes": "Read-only access enabled"
+            },
+            "message": "Dashboard handshake operating in degraded telemetry mode."
+          }
+        }
+      ]
+    },
+    {
+      "id": "bridge-worker",
+      "name": "Bridge Worker",
+      "description": "Worker executing MCP jobs pulled from the queue.",
+      "host": "http://localhost:3030",
+      "tags": ["worker", "queue"],
+      "orchestration": {
+        "composeService": "bridge-worker",
+        "local": {
+          "start": "node dist/index.js --worker",
+          "stop": "pkill -f \"dist/index.js --worker\""
+        }
+      },
+      "handshakes": [
+        {
+          "client": "automation",
+          "protocol": "mcp-channel",
+          "endpoint": "tcp://localhost:4000",
+          "summary": "Performs a channel negotiation with the automation worker profile.",
+          "requiresCredentials": true,
+          "credentialEnvVars": ["PARALLAX_WORKER_TOKEN"],
+          "guidance": "Set PARALLAX_WORKER_TOKEN to the worker secret issued by operations.",
+          "mock": {
+            "result": "ok",
+            "latencyMs": 102,
+            "payload": {
+              "session": "automation",
+              "version": "1.0.0",
+              "capabilities": ["jobs.consume", "jobs.ack"]
+            }
+          }
+        },
+        {
+          "client": "cli",
+          "protocol": "mcp-channel",
+          "endpoint": "tcp://localhost:4001",
+          "summary": "Validates developer CLI can open a dry-run automation channel.",
+          "requiresCredentials": false,
+          "mock": {
+            "result": "error",
+            "latencyMs": 88,
+            "message": "Channel handshake disabled for CLI profile in development mode."
+          }
+        }
+      ]
+    },
+    {
+      "id": "dashboard-proxy",
+      "name": "Dashboard Proxy",
+      "description": "Edge proxy serving the dashboard assets and forwarding MCP telemetry.",
+      "host": "http://localhost:4173",
+      "tags": ["dashboard", "edge"],
+      "orchestration": {
+        "composeService": "dashboard",
+        "local": {
+          "start": "npm --prefix dashboard run dev",
+          "stop": "echo 'Stop the dashboard dev server manually'"
+        }
+      },
+      "handshakes": [
+        {
+          "client": "dashboard",
+          "protocol": "http",
+          "endpoint": "/health",
+          "summary": "Checks proxy health endpoint for cached dashboard assets.",
+          "requiresCredentials": false,
+          "mock": {
+            "result": "ok",
+            "latencyMs": 34,
+            "payload": {
+              "session": "dashboard",
+              "version": "0.1.0",
+              "assets": 12
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

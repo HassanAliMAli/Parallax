@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "outDir": "./tmp/test-dist",
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "module": "CommonJS",
+    "moduleResolution": "Node"
+  },
+  "include": [
+    "scripts/src/**/*",
+    "tests/**/*"
+  ]
+}

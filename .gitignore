@@ -3,6 +3,7 @@
 
 # Build output
 /dist
+/scripts/dist
 
 # Runtime data
 /data
